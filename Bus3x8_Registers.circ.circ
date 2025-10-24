@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project source="logisim-evolution" version="3.8.0">
+  <lib name="0" desc="Base"/>
+  <lib name="1" desc="Gates"/>
+  <lib name="2" desc="Plexers"/>
+  <lib name="3" desc="Memory"/>
+  <lib name="4" desc="Wiring"/>
+  <circuit name="main">
+    <!-- ===== Inputs ===== -->
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="A2"/><a name="width" val="1"/><a name="loc" val="(40,60)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="A1"/><a name="width" val="1"/><a name="loc" val="(40,90)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="A0"/><a name="width" val="1"/><a name="loc" val="(40,120)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(40,170)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(40,200)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="DIN2"/><a name="width" val="1"/><a name="loc" val="(40,260)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="DIN1"/><a name="width" val="1"/><a name="loc" val="(40,290)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="DIN0"/><a name="width" val="1"/><a name="loc" val="(40,320)"/></comp>
+    <comp lib="4" name="Pin"><a name="facing" val="east"/><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(40,360)"/></comp>
+
+    <!-- Combine A[2:0] for Decoder -->
+    <comp lib="4" name="Splitter">
+      <a name="facing" val="east"/>
+      <a name="fanout" val="3"/>
+      <a name="bit0" val="0"/>
+      <a name="bit1" val="1"/>
+      <a name="bit2" val="2"/>
+      <a name="incoming" val="none"/>
+      <a name="width" val="3"/>
+      <a name="loc" val="(120,90)"/>
+    </comp>
+    <wire from="(80,60)" to="(120,60)"/>
+    <wire from="(80,90)" to="(120,90)"/>
+    <wire from="(80,120)" to="(120,120)"/>
+
+    <!-- 3-to-8 Decoder -->
+    <comp lib="2" name="Decoder">
+      <a name="enable" val="true"/>
+      <a name="select" val="3"/>
+      <a name="loc" val="(210,90)"/>
+    </comp>
+    <wire from="(160,90)" to="(210,90)"/>
+    <comp lib="4" name="Constant"><a name="value" val="1"/><a name="width" val="1"/><a name="loc" val="(190,60)"/></comp>
+    <wire from="(190,60)" to="(210,60)"/>
+
+    <!-- Tunnel buses for global signals -->
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(100,170)"/></comp>
+    <wire from="(80,170)" to="(100,170)"/>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(100,200)"/></comp>
+    <wire from="(80,200)" to="(100,200)"/>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(100,360)"/></comp>
+    <wire from="(80,360)" to="(100,360)"/>
+
+    <!-- Combine DIN[2:0] into bus DIN (width 3) -->
+    <comp lib="4" name="Splitter">
+      <a name="facing" val="east"/>
+      <a name="fanout" val="3"/>
+      <a name="incoming" val="yes"/>
+      <a name="bit0" val="0"/>
+      <a name="bit1" val="1"/>
+      <a name="bit2" val="2"/>
+      <a name="width" val="3"/>
+      <a name="loc" val="(120,290)"/>
+    </comp>
+    <wire from="(80,260)" to="(120,260)"/>
+    <wire from="(80,290)" to="(120,290)"/>
+    <wire from="(80,320)" to="(120,320)"/>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(170,290)"/></comp>
+    <wire from="(160,290)" to="(170,290)"/>
+
+    <!-- Decoder outputs -> tunnels Sel0..Sel7 -->
+    <!-- We'll place eight tunnels near decoder outputs to label them -->
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel0"/><a name="width" val="1"/><a name="loc" val="(260,40)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel1"/><a name="width" val="1"/><a name="loc" val="(260,60)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel2"/><a name="width" val="1"/><a name="loc" val="(260,80)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel3"/><a name="width" val="1"/><a name="loc" val="(260,100)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel4"/><a name="width" val="1"/><a name="loc" val="(260,120)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel5"/><a name="width" val="1"/><a name="loc" val="(260,140)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel6"/><a name="width" val="1"/><a name="loc" val="(260,160)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel7"/><a name="width" val="1"/><a name="loc" val="(260,180)"/></comp>
+
+    <!-- Wires from decoder pins to tunnels (approx positions) -->
+    <wire from="(230,40)" to="(260,40)"/>
+    <wire from="(230,60)" to="(260,60)"/>
+    <wire from="(230,80)" to="(260,80)"/>
+    <wire from="(230,100)" to="(260,100)"/>
+    <wire from="(230,120)" to="(260,120)"/>
+    <wire from="(230,140)" to="(260,140)"/>
+    <wire from="(230,160)" to="(260,160)"/>
+    <wire from="(230,180)" to="(260,180)"/>
+
+    <!-- Global BUS tunnel and probes -->
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(1000,230)"/></comp>
+    <comp lib="4" name="Probe"><a name="label" val="BUS2"/><a name="loc" val="(1060,220)"/></comp>
+    <comp lib="4" name="Probe"><a name="label" val="BUS1"/><a name="loc" val="(1060,240)"/></comp>
+    <comp lib="4" name="Probe"><a name="label" val="BUS0"/><a name="loc" val="(1060,260)"/></comp>
+
+    <!-- Split BUS to bits for probes -->
+    <comp lib="4" name="Splitter">
+      <a name="facing" val="east"/>
+      <a name="fanout" val="3"/>
+      <a name="incoming" val="yes"/>
+      <a name="bit0" val="0"/>
+      <a name="bit1" val="1"/>
+      <a name="bit2" val="2"/>
+      <a name="width" val="3"/>
+      <a name="loc" val="(1020,230)"/>
+    </comp>
+    <wire from="(1000,230)" to="(1020,230)"/>
+    <wire from="(1040,220)" to="(1060,220)"/>
+    <wire from="(1040,240)" to="(1060,240)"/>
+    <wire from="(1040,260)" to="(1060,260)"/>
+
+    <!-- ====== Register Blocks R0..R7 ====== -->
+    <!-- Helper macro-like pattern in comments:
+         Load_i = AND(WE, Sel_i) -> Register.load
+         EN_i   = AND(RE, Sel_i) -> TriState.enable
+         DIN (bus 3) -> Register.D (bus 3)
+         Register.Q (bus 3) -> TriState.in (bus 3) -> BUS (bus 3)
+         CLOCK -> Register.CLK
+    -->
+
+    <!-- --- R0 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,140)"/></comp> <!-- WE & Sel0 -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,180)"/></comp> <!-- RE & Sel0 -->
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R0"/><a name="loc" val="(420,160)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(520,160)"/></comp>
+    <!-- Tunnels near R0 -->
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel0"/><a name="width" val="1"/><a name="loc" val="(300,120)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(300,160)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(300,200)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(400,220)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(400,200)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(560,160)"/></comp>
+    <!-- local wires for R0 -->
+    <wire from="(300,120)" to="(320,120)"/><!-- Sel0 -> AND top -->
+    <wire from="(300,160)" to="(320,160)"/><!-- WE -> AND top -->
+    <wire from="(300,200)" to="(320,200)"/><!-- RE -> AND bottom -->
+    <wire from="(350,140)" to="(400,140)"/><!-- Load0 -->
+    <wire from="(350,180)" to="(520,180)"/><!-- EN0 -->
+    <wire from="(400,200)" to="(420,200)"/><!-- CLOCK -->
+    <wire from="(400,220)" to="(420,220)"/><!-- DIN (3-bit) to D -->
+    <wire from="(460,160)" to="(520,160)"/><!-- Q to Tri in -->
+    <wire from="(540,160)" to="(560,160)"/><!-- Tri out to BUS -->
+
+    <!-- --- R1 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,300)"/></comp>
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,340)"/></comp>
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R1"/><a name="loc" val="(420,320)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(520,320)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel1"/><a name="width" val="1"/><a name="loc" val="(300,280)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(300,320)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(300,360)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(400,380)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(400,360)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(560,320)"/></comp>
+    <wire from="(300,280)" to="(320,280)"/>
+    <wire from="(300,320)" to="(320,320)"/>
+    <wire from="(300,360)" to="(320,360)"/>
+    <wire from="(350,300)" to="(400,300)"/>
+    <wire from="(350,340)" to="(520,340)"/>
+    <wire from="(400,360)" to="(420,360)"/>
+    <wire from="(400,380)" to="(420,380)"/>
+    <wire from="(460,320)" to="(520,320)"/>
+    <wire from="(540,320)" to="(560,320)"/>
+
+    <!-- --- R2 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,460)"/></comp>
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,500)"/></comp>
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R2"/><a name="loc" val="(420,480)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(520,480)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel2"/><a name="width" val="1"/><a name="loc" val="(300,440)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(300,480)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(300,520)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(400,540)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(400,520)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(560,480)"/></comp>
+    <wire from="(300,440)" to="(320,440)"/>
+    <wire from="(300,480)" to="(320,480)"/>
+    <wire from="(300,520)" to="(320,520)"/>
+    <wire from="(350,460)" to="(400,460)"/>
+    <wire from="(350,500)" to="(520,500)"/>
+    <wire from="(400,520)" to="(420,520)"/>
+    <wire from="(400,540)" to="(420,540)"/>
+    <wire from="(460,480)" to="(520,480)"/>
+    <wire from="(540,480)" to="(560,480)"/>
+
+    <!-- --- R3 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,620)"/></comp>
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(320,660)"/></comp>
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R3"/><a name="loc" val="(420,640)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(520,640)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel3"/><a name="width" val="1"/><a name="loc" val="(300,600)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(300,640)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(300,680)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(400,700)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(400,680)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(560,640)"/></comp>
+    <wire from="(300,600)" to="(320,600)"/>
+    <wire from="(300,640)" to="(320,640)"/>
+    <wire from="(300,680)" to="(320,680)"/>
+    <wire from="(350,620)" to="(400,620)"/>
+    <wire from="(350,660)" to="(520,660)"/>
+    <wire from="(400,680)" to="(420,680)"/>
+    <wire from="(400,700)" to="(420,700)"/>
+    <wire from="(460,640)" to="(520,640)"/>
+    <wire from="(540,640)" to="(560,640)"/>
+
+    <!-- --- R4 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,140)"/></comp>
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,180)"/></comp>
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R4"/><a name="loc" val="(800,160)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(900,160)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel4"/><a name="width" val="1"/><a name="loc" val="(680,120)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(680,160)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(680,200)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(780,220)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(780,200)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(940,160)"/></comp>
+    <wire from="(680,120)" to="(700,120)"/>
+    <wire from="(680,160)" to="(700,160)"/>
+    <wire from="(680,200)" to="(700,200)"/>
+    <wire from="(730,140)" to="(780,140)"/>
+    <wire from="(730,180)" to="(900,180)"/>
+    <wire from="(780,200)" to="(800,200)"/>
+    <wire from="(780,220)" to="(800,220)"/>
+    <wire from="(840,160)" to="(900,160)"/>
+    <wire from="(920,160)" to="(940,160)"/>
+
+    <!-- --- R5 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,300)"/></comp>
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,340)"/></comp>
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R5"/><a name="loc" val="(800,320)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(900,320)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel5"/><a name="width" val="1"/><a name="loc" val="(680,280)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(680,320)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(680,360)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(780,380)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(780,360)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(940,320)"/></comp>
+    <wire from="(680,280)" to="(700,280)"/>
+    <wire from="(680,320)" to="(700,320)"/>
+    <wire from="(680,360)" to="(700,360)"/>
+    <wire from="(730,300)" to="(780,300)"/>
+    <wire from="(730,340)" to="(900,340)"/>
+    <wire from="(780,360)" to="(800,360)"/>
+    <wire from="(780,380)" to="(800,380)"/>
+    <wire from="(840,320)" to="(900,320)"/>
+    <wire from="(920,320)" to="(940,320)"/>
+
+    <!-- --- R6 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,460)"/></comp>
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,500)"/></comp>
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R6"/><a name="loc" val="(800,480)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(900,480)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel6"/><a name="width" val="1"/><a name="loc" val="(680,440)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(680,480)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(680,520)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(780,540)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(780,520)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(940,480)"/></comp>
+    <wire from="(680,440)" to="(700,440)"/>
+    <wire from="(680,480)" to="(700,480)"/>
+    <wire from="(680,520)" to="(700,520)"/>
+    <wire from="(730,460)" to="(780,460)"/>
+    <wire from="(730,500)" to="(900,500)"/>
+    <wire from="(780,520)" to="(800,520)"/>
+    <wire from="(780,540)" to="(800,540)"/>
+    <wire from="(840,480)" to="(900,480)"/>
+    <wire from="(920,480)" to="(940,480)"/>
+
+    <!-- --- R7 block --- -->
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,620)"/></comp>
+    <comp lib="1" name="AND Gate"><a name="size" val="30"/><a name="loc" val="(700,660)"/></comp>
+    <comp lib="3" name="Register"><a name="width" val="3"/><a name="label" val="R7"/><a name="loc" val="(800,640)"/><a name="clocked" val="true"/><a name="load" val="true"/></comp>
+    <comp lib="2" name="Tri-State Buffer"><a name="width" val="3"/><a name="loc" val="(900,640)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="Sel7"/><a name="width" val="1"/><a name="loc" val="(680,600)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="WE"/><a name="width" val="1"/><a name="loc" val="(680,640)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="RE"/><a name="width" val="1"/><a name="loc" val="(680,680)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="DIN"/><a name="width" val="3"/><a name="loc" val="(780,700)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="CLOCK"/><a name="width" val="1"/><a name="loc" val="(780,680)"/></comp>
+    <comp lib="4" name="Tunnel"><a name="label" val="BUS"/><a name="width" val="3"/><a name="loc" val="(940,640)"/></comp>
+    <wire from="(680,600)" to="(700,600)"/>
+    <wire from="(680,640)" to="(700,640)"/>
+    <wire from="(680,680)" to="(700,680)"/>
+    <wire from="(730,620)" to="(780,620)"/>
+    <wire from="(730,660)" to="(900,660)"/>
+    <wire from="(780,680)" to="(800,680)"/>
+    <wire from="(780,700)" to="(800,700)"/>
+    <wire from="(840,640)" to="(900,640)"/>
+    <wire from="(920,640)" to="(940,640)"/>
+  </circuit>
+</project>
