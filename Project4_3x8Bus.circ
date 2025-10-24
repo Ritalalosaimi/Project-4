@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project source="logisim-evolution" version="3.8.0">
+  <lib name="0" desc="Base"/>
+  <lib name="1" desc="Gates"/>
+  <lib name="2" desc="Plexers"/>
+  <lib name="3" desc="Memory"/>
+  <lib name="4" desc="Wiring"/>
+  <circuit name="main">
+    <!-- Input Pins -->
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="A2"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,60)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="A1"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,90)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="A0"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,120)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="WE"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,170)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="RE"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,200)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="DIN2"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,260)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="DIN1"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,290)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="DIN0"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,320)"/>
+    </comp>
+    <comp lib="4" name="Pin">
+      <a name="facing" val="east"/>
+      <a name="label" val="CLOCK"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(50,360)"/>
+    </comp>
+
+    <!-- Splitter for A[2:0] to the Decoder -->
+    <comp lib="4" name="Splitter">
+      <a name="facing" val="east"/>
+      <a name="fanout" val="3"/>
+      <a name="bit0" val="0"/>
+      <a name="bit1" val="1"/>
+      <a name="bit2" val="2"/>
+      <a name="incoming" val="none"/>
+      <a name="width" val="3"/>
+      <a name="loc" val="(140,90)"/>
+    </comp>
+
+    <!-- Wires from A pins to splitter -->
+    <wire from="(90,60)" to="(140,60)"/>
+    <wire from="(90,90)" to="(140,90)"/>
+    <wire from="(90,120)" to="(140,120)"/>
+
+    <!-- Decoder 3-to-8 -->
+    <comp lib="2" name="Decoder">
+      <a name="enable" val="true"/>
+      <a name="select" val="3"/>
+      <a name="loc" val="(220,90)"/>
+    </comp>
+
+    <!-- Constant 1 to Decoder enable -->
+    <comp lib="4" name="Constant">
+      <a name="value" val="1"/>
+      <a name="width" val="1"/>
+      <a name="loc" val="(200,60)"/>
+    </comp>
+    <wire from="(200,60)" to="(220,60)"/>
+    <!-- Wire from splitter output bus to decoder select -->
+    <wire from="(180,90)" to="(220,90)"/>
+
+    <!-- Shared BUS Probes -->
+    <comp lib="4" name="Probe">
+      <a name="label" val="BUS2"/>
+      <a name="loc" val="(950,220)"/>
+    </comp>
+    <comp lib="4" name="Probe">
+      <a name="label" val="BUS1"/>
+      <a name="loc" val="(950,240)"/>
+    </comp>
+    <comp lib="4" name="Probe">
+      <a name="label" val="BUS0"/>
+      <a name="loc" val="(950,260)"/>
+    </comp>
+
+    <!-- RE/WE buses (fanout on left) -->
+    <wire from="(90,170)" to="(260,170)"/>
+    <wire from="(90,200)" to="(260,200)"/>
+
+    <!-- DIN buses routed horizontally -->
+    <wire from="(90,260)" to="(820,260)"/>
+    <wire from="(90,290)" to="(820,290)"/>
+    <wire from="(90,320)" to="(820,320)"/>
+
+    <!-- CLOCK fanout to all registers -->
+    <wire from="(90,360)" to="(820,360)"/>
+
+    <!-- Generate 8 register blocks R0..R7 with 3-bit width -->
+    <!-- Each block: AND(WE,Sel_i) -> Load, AND(RE,Sel_i) -> Tri-State EN, Register(3-bit) -> Tri-State(3-bit) -> BUS -->
+    <!-- R0 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,140)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,200)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R0"/>
+      <a name="loc" val="(420,210)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(540,210)"/>
+    </comp>
+
+    <!-- R1 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,280)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,340)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R1"/>
+      <a name="loc" val="(420,330)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(540,330)"/>
+    </comp>
+
+    <!-- R2 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,420)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,480)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R2"/>
+      <a name="loc" val="(420,470)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(540,470)"/>
+    </comp>
+
+    <!-- R3 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,560)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(300,620)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R3"/>
+      <a name="loc" val="(420,610)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(540,610)"/>
+    </comp>
+
+    <!-- R4 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,140)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,200)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R4"/>
+      <a name="loc" val="(780,210)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(900,210)"/>
+    </comp>
+
+    <!-- R5 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,280)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,340)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R5"/>
+      <a name="loc" val="(780,330)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(900,330)"/>
+    </comp>
+
+    <!-- R6 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,420)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,480)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R6"/>
+      <a name="loc" val="(780,470)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(900,470)"/>
+    </comp>
+
+    <!-- R7 -->
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,560)"/>
+    </comp>
+    <comp lib="1" name="AND Gate">
+      <a name="size" val="30"/>
+      <a name="loc" val="(660,620)"/>
+    </comp>
+    <comp lib="3" name="Register">
+      <a name="width" val="3"/>
+      <a name="label" val="R7"/>
+      <a name="loc" val="(780,610)"/>
+      <a name="clocked" val="true"/>
+      <a name="load" val="true"/>
+    </comp>
+    <comp lib="2" name="Tri-State Buffer">
+      <a name="width" val="3"/>
+      <a name="loc" val="(900,610)"/>
+    </comp>
+
+    <!-- BUS horizontal wires for probes (from 900-x to 950-x) -->
+    <wire from="(920,220)" to="(950,220)"/>
+    <wire from="(920,240)" to="(950,240)"/>
+    <wire from="(920,260)" to="(950,260)"/>
+
+  </circuit>
+</project>
